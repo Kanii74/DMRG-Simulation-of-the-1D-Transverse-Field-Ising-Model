@@ -1,0 +1,58 @@
+
+```python
+import quimb.tensor as qtn
+import matplotlib.pyplot as plt
+import numpy as np
+
+# --- 1. Parameters ---
+L = 40  # number of lattice sites
+h_values = np.linspace(0.0, 2.0, 20)
+magnetizations = []
+entropies = []
+
+print(f"Starting Phase Scan on {L} sites...")
+
+# --- 2. Field Scan Loop ---
+for h in h_values:
+    # Build Hamiltonian
+    H = qtn.MPO_ham_ising(L, j=1.0, bx=h)
+    
+    # Run DMRG
+    dmrg = qtn.DMRG2(H, bond_dims=[10, 20, 40])
+    dmrg.solve(verbosity=0, max_sweeps=4)
+    
+    # Ground state (MPS)
+    mps = dmrg.state
+    
+    # Compute Z-magnetization at each site and average
+    mags = [mps.magnetization(i, 'Z') for i in range(L)]
+    avg_mag = np.mean(np.abs(mags))
+    magnetizations.append(avg_mag)
+    
+    # Entanglement entropy at center bond
+    ent = mps.entropy(L // 2)
+    entropies.append(ent)
+    
+    print(f"h={h:.2f} | Mag: {avg_mag:.3f} | Entropy: {ent:.3f}")
+
+# --- 3. Visualization ---
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
+
+# Magnetization plot
+ax1.plot(h_values, magnetizations, 'o-', color='crimson', label='Magnetization')
+ax1.axvline(x=1.0, color='black', linestyle='--', label='Critical Point (h=1)')
+ax1.set_ylabel("|<Z>|")
+ax1.legend()
+ax1.grid(alpha=0.3)
+
+# Entropy plot
+ax2.plot(h_values, entropies, 's-', color='royalblue', label='Entanglement Entropy')
+ax2.axvline(x=1.0, color='black', linestyle='--')
+ax2.set_ylabel("Entropy")
+ax2.set_xlabel("Transverse Field (h)")
+ax2.legend()
+ax2.grid(alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+```
