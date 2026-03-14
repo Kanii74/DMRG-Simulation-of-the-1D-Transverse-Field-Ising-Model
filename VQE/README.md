@@ -313,9 +313,7 @@ The following table shows the numerical results obtained from the VQE simulation
 
 Insert the generated plot below.
 
-```
-
-```
+![VQE TFIM Results](figures/vqe_TFIM.png)
 
 The figure contains three panels:
 
