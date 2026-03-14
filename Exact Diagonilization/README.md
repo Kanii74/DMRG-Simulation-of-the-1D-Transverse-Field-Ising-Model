@@ -289,9 +289,8 @@ Insert the generated plot below.
 
 Example (after adding your figure):
 
-```markdown
-![Exact Diagonalization Results](ed_TFIM_results.png)
-```
+![Exact Diagonalization Results](exact_diagonalization.png)
+
 
 The plot typically shows
 
